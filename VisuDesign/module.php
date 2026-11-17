@@ -292,7 +292,7 @@ class VisuDesign extends IPSModule
         }
         $map = json_decode($this->ReadAttributeString('ColorMap'), true) ?: [];
         $exclude = $this->ExcludeRoots();
-        $plan = $this->ReadPropertyBoolean('ApplySchedules') ? $this->ApplySchedules($exclude) : 0;
+        $plan = $this->ReadPropertyBoolean('ApplySchedules') ? $this->ApplySchedules() : 0;
         $pres = $this->ReadPropertyBoolean('ApplyPresentations') ? $this->ApplyPresentations($map, $exclude, false) : 0;
         $prof = $this->ReadPropertyBoolean('ApplyProfiles') ? $this->ApplyProfiles($map, $exclude, false) : 0;
         $visu = $this->ApplyVisu();
@@ -316,13 +316,14 @@ class VisuDesign extends IPSModule
         return sprintf('Wiederhergestellt: %d Darstellungen, %d Profilfarben. Anwenden auf Darstellungen und Profile ist abgeschaltet.', $pres, $prof);
     }
 
-    private function ApplySchedules(array $exclude): int
+    /** Wochenpläne richten sich nur nach den Regeln (Ausnahmen gelten hier nicht). */
+    private function ApplySchedules(): int
     {
         $rules = json_decode($this->ReadPropertyString('ScheduleRules'), true) ?: [];
         $count = 0;
         foreach (IPS_GetEventList() as $e) {
             $ev = IPS_GetEvent($e);
-            if ($ev['EventType'] !== 2 || $this->IsExcluded($e, $exclude)) {
+            if ($ev['EventType'] !== 2) {
                 continue;
             }
             foreach ($ev['ScheduleActions'] as $a) {
