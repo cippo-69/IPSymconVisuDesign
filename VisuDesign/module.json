@@ -1,0 +1,14 @@
+{
+    "id": "{018EEC85-8FFC-4E1F-A966-702C4BBDC2E8}",
+    "name": "VisuDesign",
+    "type": 3,
+    "vendor": "",
+    "aliases": [
+        "Visu Design"
+    ],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "W5D",
+    "url": "https://github.com/cippo-69/IPSymconVisuDesign"
+}
