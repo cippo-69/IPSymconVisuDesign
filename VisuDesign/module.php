@@ -68,6 +68,7 @@ class VisuDesign extends IPSModule
         $this->RegisterPropertyBoolean('ApplyProfiles', false);
         $this->RegisterPropertyInteger('VisuID', 0);
         $this->RegisterPropertyString('Exclude', '[]');
+        $this->RegisterPropertyString('AlarmWords', 'Alarm, Fehler, Störung, Error');
 
         $this->RegisterAttributeString('Themes', '{}');     // eigene Themes: Name => Rolle => [hell, dunkel]
         $this->RegisterAttributeString('ColorMap', '{}');   // Farbstelle => {t: Rolle|null, o: ursprüngliche Farbe}
@@ -134,6 +135,7 @@ class VisuDesign extends IPSModule
                         ]],
                     ['type' => 'CheckBox', 'name' => 'ApplyPresentations', 'caption' => 'Variablendarstellungen: Farbfelder (z. B. Leuchtfarbe von Schaltern) nach ihrem Farbton'],
                     ['type' => 'CheckBox', 'name' => 'ApplyProfiles', 'caption' => 'Eigene Variablenprofile: Farben der Zuordnungen nach ihrem Farbton (Farbskalen mit 4 und mehr Farben bleiben)'],
+                    ['type' => 'ValidationTextBox', 'name' => 'AlarmWords', 'caption' => 'Alarmwörter: Zuordnungen und Darstellungen mit diesen Wörtern immer in Alarmfarbe (Komma-getrennt; „Kein …“, „… aus“ ausgenommen)', 'width' => '640px'],
                     ['type' => 'SelectInstance', 'name' => 'VisuID', 'caption' => 'Kachel-Visu: Akzent der eingebauten Kacheln (0 = nicht ändern)', 'validModules' => [self::VISU_MODULE], 'width' => '420px'],
                     ['type' => 'List', 'name' => 'Exclude', 'caption' => 'Ausnahmen für Darstellungen und Profile (Objekte und alles darunter; Profile, die sie nutzen, bleiben ebenfalls)', 'rowCount' => 5, 'add' => true, 'delete' => true,
                         'columns' => [
@@ -360,7 +362,7 @@ class VisuDesign extends IPSModule
                 continue;
             }
             $changed = false;
-            $new = $this->Recolor($cp, 'v:' . $v . ':', $map, $changed, $restore);
+            $new = $this->Recolor($cp, 'v:' . $v . ':', $map, $changed, $restore, IPS_GetName($v));
             if ($changed) {
                 IPS_SetVariableCustomPresentation($v, $new);
                 $count++;
@@ -369,18 +371,25 @@ class VisuDesign extends IPSModule
         return $count;
     }
 
-    private function Recolor(array $a, string $prefix, array &$map, bool &$changed, bool $restore): array
+    /** $name: Bezeichnung der Stelle (Variablenname, bei Optionen deren Beschriftung) für die Alarm-Regel. */
+    private function Recolor(array $a, string $prefix, array &$map, bool &$changed, bool $restore, string $name): array
     {
+        foreach (['Caption', 'CAPTION', 'caption', 'Name', 'NAME'] as $ck) {
+            if (isset($a[$ck]) && is_string($a[$ck]) && $a[$ck] !== '') {
+                $name = $a[$ck];
+                break;
+            }
+        }
         foreach ($a as $k => $x) {
             if (is_array($x)) {
-                $a[$k] = $this->Recolor($x, $prefix . $k . '.', $map, $changed, $restore);
+                $a[$k] = $this->Recolor($x, $prefix . $k . '.', $map, $changed, $restore, $name);
                 continue;
             }
             if (is_string($x) && $x !== '' && ($x[0] === '[' || $x[0] === '{')) {
                 $j = json_decode($x, true);
                 if (is_array($j)) {
                     $inner = false;
-                    $j = $this->Recolor($j, $prefix . $k . '.', $map, $inner, $restore);
+                    $j = $this->Recolor($j, $prefix . $k . '.', $map, $inner, $restore, $name);
                     if ($inner) {
                         $a[$k] = json_encode($j);
                         $changed = true;
@@ -398,7 +407,7 @@ class VisuDesign extends IPSModule
                 if (!array_key_exists($key, $map)) {
                     $map[$key] = ['t' => $this->Classify($x), 'o' => $x];
                 }
-                $t = $map[$key]['t'];
+                $t = $this->IsAlarmName($name) ? 'alarm' : $map[$key]['t'];
                 $target = $t === null ? null : $this->Color($t, stripos((string) $k, 'GLOW') !== false ? 'dark' : 'mid');
             }
             if ($target !== null && $x !== (int) $target) {
@@ -448,7 +457,7 @@ class VisuDesign extends IPSModule
                     if (!array_key_exists($key, $map)) {
                         $map[$key] = ['t' => $this->Classify($cur), 'o' => $cur];
                     }
-                    $t = $map[$key]['t'];
+                    $t = $this->IsAlarmName((string) $as['Name']) ? 'alarm' : $map[$key]['t'];
                     $target = $t === null ? null : $this->Color($t, 'mid');
                 }
                 if ($target !== null && $cur !== (int) $target) {
@@ -488,6 +497,20 @@ class VisuDesign extends IPSModule
     // ------------------------------------------------------------------ Hilfen
 
     /** Farbrolle eines ursprünglichen Farbtons; null = neutral (Schwarz, Weiß, Grau, Violett) oder keine Farbe. */
+    /** Alarm-Regel: Bezeichnung enthält ein Alarmwort und ist nicht verneint („Kein Fehler“, „Alarm aus“ bleiben). */
+    private function IsAlarmName(string $name): bool
+    {
+        if ($name === '' || preg_match('/\b(kein|keine|keiner|keinen|ohne|nicht|no|none|aus|off|inaktiv)\b/iu', $name)) {
+            return false;
+        }
+        foreach (preg_split('/\s*,\s*/', $this->ReadPropertyString('AlarmWords')) as $w) {
+            if ($w !== '' && mb_stripos($name, $w) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private function Classify(int $c): ?string
     {
         if ($c < 0) {

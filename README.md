@@ -50,7 +50,8 @@ Ab Werk aus; im Formular unter „Anwenden auf“ einschalten. Geschrieben werde
 | Eigene Profile | Farben der Zuordnungen nach dem ursprünglichen Farbton; Profile mit `~` und Farbskalen (4 und mehr Farbtöne) bleiben |
 | Kachel-Visu | Design-Datei mit `accentColor`, `onAccentColor`, `errorColor`, `onErrorColor`; wird über das helle bzw. dunkle Design des Geräts gelegt |
 
-Zuordnung nach Farbton: Grün → Akzent, Rot → Alarm, Orange → Warnung, Gelb → Sonne, Blau → Wasser; Schwarz, Weiß, Grau und Violett bleiben.
+Alarm-Regel: Zuordnungen und Darstellungen, deren Bezeichnung ein Alarmwort enthält (Standard: Alarm, Fehler, Störung, Error), sind immer in Alarmfarbe;
+verneinte Bezeichnungen („Kein Fehler“, „Alarm aus“) sind ausgenommen. Sonst gilt die Zuordnung nach Farbton: Grün → Akzent, Rot → Alarm, Orange → Warnung, Gelb → Sonne, Blau → Wasser; Schwarz, Weiß, Grau und Violett bleiben.
 Die ursprüngliche Farbe jeder Stelle wird gemerkt; „Ursprungsfarben wiederherstellen“ setzt Darstellungen und Profile zurück.
 Einzelfarben (Wochenplan, Profile, Visu-Akzent) sind die Mitte aus hellem und dunklem Wert. Unter „Ausnahmen“ eingetragene Objekte
 (und alles darunter) behalten ihre Darstellungsfarben; Profile, die eine ausgenommene Variable nutzt, bleiben ebenfalls unverändert.
