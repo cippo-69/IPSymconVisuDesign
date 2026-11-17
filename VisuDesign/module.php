@@ -135,7 +135,7 @@ class VisuDesign extends IPSModule
                     ['type' => 'CheckBox', 'name' => 'ApplyPresentations', 'caption' => 'Variablendarstellungen: Farbfelder (z. B. Leuchtfarbe von Schaltern) nach ihrem Farbton'],
                     ['type' => 'CheckBox', 'name' => 'ApplyProfiles', 'caption' => 'Eigene Variablenprofile: Farben der Zuordnungen nach ihrem Farbton (Farbskalen mit 4 und mehr Farben bleiben)'],
                     ['type' => 'SelectInstance', 'name' => 'VisuID', 'caption' => 'Kachel-Visu: Akzent der eingebauten Kacheln (0 = nicht ändern)', 'validModules' => [self::VISU_MODULE], 'width' => '420px'],
-                    ['type' => 'List', 'name' => 'Exclude', 'caption' => 'Ausnahmen (Objekte und alles darunter bleiben unverändert)', 'rowCount' => 5, 'add' => true, 'delete' => true,
+                    ['type' => 'List', 'name' => 'Exclude', 'caption' => 'Ausnahmen für Darstellungen und Profile (Objekte und alles darunter; Profile, die sie nutzen, bleiben ebenfalls)', 'rowCount' => 5, 'add' => true, 'delete' => true,
                         'columns' => [
                             ['caption' => 'Objekt', 'name' => 'ObjectID', 'width' => 'auto', 'add' => 0, 'edit' => ['type' => 'SelectObject']]
                         ]],
@@ -294,7 +294,7 @@ class VisuDesign extends IPSModule
         $exclude = $this->ExcludeRoots();
         $plan = $this->ReadPropertyBoolean('ApplySchedules') ? $this->ApplySchedules($exclude) : 0;
         $pres = $this->ReadPropertyBoolean('ApplyPresentations') ? $this->ApplyPresentations($map, $exclude, false) : 0;
-        $prof = $this->ReadPropertyBoolean('ApplyProfiles') ? $this->ApplyProfiles($map, false) : 0;
+        $prof = $this->ReadPropertyBoolean('ApplyProfiles') ? $this->ApplyProfiles($map, $exclude, false) : 0;
         $visu = $this->ApplyVisu();
         $this->WriteAttributeString('ColorMap', json_encode($map));
         $msg = sprintf('%s – geändert: %d Wochenplan-Aktionen, %d Darstellungen, %d Profilfarben, Kachel-Visu %s',
@@ -309,7 +309,7 @@ class VisuDesign extends IPSModule
     {
         $map = json_decode($this->ReadAttributeString('ColorMap'), true) ?: [];
         $pres = $this->ApplyPresentations($map, $this->ExcludeRoots(), true);
-        $prof = $this->ApplyProfiles($map, true);
+        $prof = $this->ApplyProfiles($map, [], true);
         IPS_SetProperty($this->InstanceID, 'ApplyPresentations', false);
         IPS_SetProperty($this->InstanceID, 'ApplyProfiles', false);
         IPS_ApplyChanges($this->InstanceID);
@@ -408,11 +408,22 @@ class VisuDesign extends IPSModule
         return $a;
     }
 
-    private function ApplyProfiles(array &$map, bool $restore): int
+    private function ApplyProfiles(array &$map, array $exclude, bool $restore): int
     {
+        // Profile, die eine ausgenommene Variable nutzt, bleiben unverändert
+        $skip = [];
+        if (count($exclude) > 0) {
+            foreach (IPS_GetVariableList() as $v) {
+                if ($this->IsExcluded($v, $exclude)) {
+                    $var = IPS_GetVariable($v);
+                    $skip[$var['VariableCustomProfile']] = true;
+                    $skip[$var['VariableProfile']] = true;
+                }
+            }
+        }
         $count = 0;
         foreach (IPS_GetVariableProfileList() as $p) {
-            if ($p === '' || $p[0] === '~') {
+            if ($p === '' || $p[0] === '~' || isset($skip[$p])) {
                 continue;
             }
             $assoc = IPS_GetVariableProfile($p)['Associations'];

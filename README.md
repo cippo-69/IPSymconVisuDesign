@@ -53,7 +53,8 @@ Ab Werk aus; im Formular unter „Anwenden auf“ einschalten. Geschrieben werde
 Zuordnung nach Farbton: Grün → Akzent, Rot → Alarm, Orange → Warnung, Gelb → Sonne, Blau → Wasser; Schwarz, Weiß, Grau und Violett bleiben.
 Die ursprüngliche Farbe jeder Stelle wird gemerkt; „Ursprungsfarben wiederherstellen“ setzt Darstellungen und Profile zurück.
 Einzelfarben (Wochenplan, Profile, Visu-Akzent) sind die Mitte aus hellem und dunklem Wert. Unter „Ausnahmen“ eingetragene Objekte
-(und alles darunter) bleiben unverändert.
+(und alles darunter) behalten ihre Darstellungsfarben; Profile, die eine ausgenommene Variable nutzt, bleiben ebenfalls unverändert.
+Wochenpläne richten sich nur nach den Regeln.
 
 ## Funktionen
 
