@@ -75,6 +75,8 @@ class VisuDesign extends IPSModule
         $this->RegisterAttributeString('LastApply', '');
 
         $this->RegisterTimer('Reapply', 0, 'W5D_Apply($_IPS[\'TARGET\']);');
+
+        $this->SetVisualizationType(1); // HTML-SDK-Kachel: Themes wählen, Farben anpassen, speichern
     }
 
     public function ApplyChanges()
@@ -95,6 +97,122 @@ class VisuDesign extends IPSModule
         if (IPS_GetKernelRunlevel() === KR_READY) {
             $this->Apply();
         }
+        $this->Push();
+    }
+
+    // ------------------------------------------------------------------ Kachel
+
+    public function GetVisualizationTile(): string
+    {
+        return '<style id="w5d">' . $this->GetCSS() . '</style>' . file_get_contents(__DIR__ . '/module.html')
+            . '<script>handleMessage(' . json_encode(json_encode($this->TileState())) . ');</script>';
+    }
+
+    public function RequestAction($Ident, $Value)
+    {
+        $msg = '';
+        switch ($Ident) {
+            case 'LoadTheme':
+                $this->LoadTheme((string) $Value);   // ApplyChanges sendet den neuen Zustand
+                return;
+            case 'SetColors':
+                $msg = $this->SetColors((string) $Value);
+                break;
+            case 'SaveTheme':
+                $msg = $this->SaveThemeChecked((string) $Value);
+                break;
+            case 'DeleteTheme':
+                if (isset(self::THEMES[(string) $Value])) {
+                    $msg = 'Eingebaute Themes können nicht gelöscht werden';
+                } else {
+                    $this->DeleteTheme((string) $Value);
+                    $msg = '„' . $Value . '“ gelöscht';
+                }
+                break;
+            case 'Apply':
+                $msg = $this->Apply();
+                break;
+            default:
+                throw new Exception('Unbekannte Aktion ' . $Ident);
+        }
+        $this->Push($msg);
+    }
+
+    /** Farben aus der Kachel übernehmen: JSON {Rolle: ["#hell", "#dunkel"]}. */
+    public function SetColors(string $JSON): string
+    {
+        $in = json_decode($JSON, true);
+        if (!is_array($in)) {
+            return 'Ungültige Farben';
+        }
+        $n = 0;
+        foreach (self::TOKENS as $token => $caption) {
+            $pair = $in[$token] ?? null;
+            if (!is_array($pair) || count($pair) !== 2) {
+                continue;
+            }
+            foreach ([false, true] as $i => $dark) {
+                if (!preg_match('/^#?[0-9A-Fa-f]{6}$/', (string) $pair[$i])) {
+                    continue;
+                }
+                $c = hexdec(ltrim((string) $pair[$i], '#'));
+                if ($this->ReadPropertyInteger($this->Prop($token, $dark)) !== $c) {
+                    IPS_SetProperty($this->InstanceID, $this->Prop($token, $dark), $c);
+                    $n++;
+                }
+            }
+        }
+        if ($n > 0) {
+            IPS_ApplyChanges($this->InstanceID);
+        }
+        return $n > 0 ? $n . ' Farben übernommen' : 'Keine Änderung';
+    }
+
+    private function SaveThemeChecked(string $Name): string
+    {
+        $Name = trim($Name);
+        if ($Name === '') {
+            return 'Bitte einen Namen eingeben';
+        }
+        if (isset(self::THEMES[$Name])) {
+            return 'Eingebaute Themes können nicht überschrieben werden';
+        }
+        $this->SaveTheme($Name);
+        return 'Gespeichert als „' . $Name . '“';
+    }
+
+    private function Push(string $msg = ''): void
+    {
+        $state = $this->TileState();
+        if ($msg !== '') {
+            $state['msg'] = $msg;
+        }
+        $this->UpdateVisualizationValue(json_encode($state));
+    }
+
+    private function TileState(): array
+    {
+        $hexPair = fn (array $p) => [$this->Hex((int) $p[0]), $this->Hex((int) $p[1])];
+        $themes = [];
+        foreach ($this->AllThemes() as $name => $t) {
+            $colors = [];
+            foreach (array_keys(self::TOKENS) as $token) {
+                $colors[$token] = $hexPair($t[$token] ?? [0, 0]);
+            }
+            $themes[] = ['name' => (string) $name, 'builtin' => isset(self::THEMES[$name]), 'colors' => $colors];
+        }
+        $colors = [];
+        foreach ($this->CurrentColors() as $token => $p) {
+            $colors[$token] = $hexPair($p);
+        }
+        return [
+            'design'  => $this->GetCSS(),
+            'current' => $this->CurrentThemeName(),
+            'themes'  => $themes,
+            'colors'  => $colors,
+            'tokens'  => self::TOKENS,
+            'last'    => $this->ReadAttributeString('LastApply')
+        ];
     }
 
     public function MessageSink($TimeStamp, $SenderID, $Message, $Data)

@@ -1,0 +1,241 @@
+<style>
+:root {
+  --vd-bg: rgba(0,0,0,.045);
+  --vd-bg2: rgba(0,0,0,.075);
+  --vd-line: rgba(0,0,0,.12);
+  --vd-muted: rgba(0,0,0,.55);
+  --vd-top: 58px;          /* Platz für Titel und Vergrößern-Symbol der Symcon-Kachel */
+}
+/* Farben aus dem eigenen Design (--w5-*); die Werte nach dem Komma gelten ohne CSS */
+body {
+  --vd-accent: var(--w5-accent, #2F6B4F);
+  --vd-on: var(--w5-on, #fff);
+  --vd-fg: var(--w5-fg, #1E2224);
+  --vd-alarm: var(--w5-alarm, #C8321F);
+}
+body.dark {
+  --vd-accent: var(--w5-accent, #74B892);
+  --vd-on: var(--w5-on, #1E2224);
+  --vd-fg: var(--w5-fg, #F1F0EB);
+  --vd-alarm: var(--w5-alarm, #FF5A47);
+  --vd-bg: rgba(255,255,255,.10);
+  --vd-bg2: rgba(255,255,255,.15);
+  --vd-line: rgba(255,255,255,.16);
+  --vd-muted: rgba(255,255,255,.62);
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; }
+body { font-family: 'Poppins', 'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; font-size: 14px; line-height: 1.35; }
+button, input { font: inherit; color: var(--vd-fg); }
+#vd, #vd div, #vd span, #vd b, #vd label { color: var(--vd-fg); }
+#vd .lbl, #vd .sub, #vd .hex, #vd .meta, #vd .cap small { color: var(--vd-muted); }
+#vd { position: absolute; inset: 0; padding: var(--vd-top) 16px 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.lbl { font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
+.cur { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cur b { font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
+.sub { font-size: 12px; }
+
+/* Theme-Karten */
+.themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.th { position: relative; border: 2px solid transparent; background: var(--vd-bg); border-radius: 14px; padding: 10px 10px 9px; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 8px; min-height: 76px; }
+.th:hover { background: var(--vd-bg2); }
+.th.on { border-color: var(--vd-accent); }
+.th .nm { font-weight: 600; font-size: 13px; padding-right: 22px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.th .chk { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; border-radius: 50%; background: var(--vd-accent); display: none; align-items: center; justify-content: center; }
+.th.on .chk { display: flex; }
+#vd .th .chk svg { width: 12px; height: 12px; color: var(--vd-on); }
+.sw { display: flex; height: 18px; border-radius: 6px; overflow: hidden; }
+.sw i { flex: 1; }
+.sw i.big { flex: 2.2; }
+.th .own { font-size: 10px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
+.th .del { position: absolute; bottom: 6px; right: 6px; border: 0; background: none; padding: 4px 6px; border-radius: 8px; font-size: 11px; cursor: pointer; color: var(--vd-muted); }
+#vd .th .del.arm { background: var(--vd-alarm); color: var(--vd-on); }
+
+/* Farben bearbeiten */
+.card { background: var(--vd-bg); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.head { display: flex; align-items: center; justify-content: space-between; gap: 8px; cursor: pointer; border: 0; background: none; padding: 0; width: 100%; text-align: left; }
+.head svg { width: 16px; height: 16px; transition: transform .15s; color: var(--vd-muted); }
+.head.open svg { transform: rotate(90deg); }
+.cols { display: grid; grid-template-columns: 1fr 64px 64px; gap: 8px 10px; align-items: center; }
+.cols .h { font-size: 11px; text-align: center; }
+.cap { font-size: 13px; line-height: 1.25; }
+.pick { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+input[type=color] { -webkit-appearance: none; appearance: none; width: 44px; height: 32px; border: 1px solid var(--vd-line); border-radius: 9px; padding: 0; background: none; cursor: pointer; }
+input[type=color]::-webkit-color-swatch-wrapper { padding: 2px; }
+input[type=color]::-webkit-color-swatch { border: 0; border-radius: 7px; }
+input[type=color]::-moz-color-swatch { border: 0; border-radius: 7px; }
+.hex { font: 10px ui-monospace, Consolas, monospace; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.btn { min-height: 38px; border: 1px solid var(--vd-accent); background: none; color: var(--vd-accent); border-radius: 999px; padding: 6px 16px; cursor: pointer; font-weight: 600; font-size: 13px; }
+#vd .btn.solid { background: var(--vd-accent); color: var(--vd-on); }
+#vd .btn { color: var(--vd-accent); }
+#vd .btn.solid { color: var(--vd-on); }
+.btn:disabled { opacity: .45; cursor: default; }
+input[type=text] { flex: 1; min-width: 140px; min-height: 38px; border: 1px solid var(--vd-line); background: var(--vd-bg); border-radius: 10px; padding: 6px 12px; }
+.meta { font-size: 11px; }
+.msg { font-size: 12px; min-height: 16px; }
+
+/* kleine Kachel: nur aktives Theme und Auswahl */
+body.compact .full { display: none !important; }
+body:not(.compact) .chips { display: none; }
+body.compact #vd { padding-top: 44px; gap: 10px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { border: 1px solid var(--vd-line); background: var(--vd-bg); border-radius: 999px; padding: 5px 12px 5px 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; }
+.chip i { width: 14px; height: 14px; border-radius: 50%; }
+#vd .chip.on { background: var(--vd-accent); border-color: var(--vd-accent); color: var(--vd-on); }
+</style>
+
+<div id="vd"></div>
+
+<script>
+var VD = { s: null, open: false, edit: null, arm: '', busy: false, msg: '' };
+var ORDER = ['accent', 'warm', 'water', 'sun', 'warn', 'alarm', 'fg', 'muted', 'on'];
+var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+var CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>';
+
+function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+/* Sperre bis zur Antwort des Moduls, spätestens nach 5 s wieder frei */
+function wait() { VD.busy = true; clearTimeout(VD.bt); VD.bt = setTimeout(function () { VD.busy = false; }, 5000); }
+function send(ident, value) { if (typeof requestAction === 'function') requestAction(ident, value); }
+
+/* Dark Mode an der hellen Schriftfarbe der Visu erkennen (wie in den anderen W5x-Kacheln) */
+function theme() {
+  var b = document.body;
+  var m = /rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(getComputedStyle(b).color || ''), dark;
+  if (m) dark = (0.2126 * m[1] + 0.7152 * m[2] + 0.0722 * m[3]) / 255 > 0.5;
+  else dark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  b.classList.toggle('dark', dark);
+  b.classList.toggle('compact', window.innerHeight < 300);
+}
+window.addEventListener('resize', function () { if (VD.s) render(); });
+
+/* Design-CSS live übernehmen (Element #w5d) */
+function design(css) {
+  if (typeof css !== 'string') return;
+  var st = document.getElementById('w5d');
+  if (!st) { st = document.createElement('style'); st.id = 'w5d'; (document.head || document.body).appendChild(st); }
+  if (st.textContent !== css) st.textContent = css;
+}
+
+function handleMessage(data) {
+  try { VD.s = typeof data === 'string' ? JSON.parse(data) : data; } catch (e) { return; }
+  design(VD.s.design);
+  if (VD.busy) VD.msg = '';
+  VD.busy = false;
+  if (VD.s.msg) VD.msg = VD.s.msg;
+  // Bearbeitung verwerfen, wenn sich die Farben von außen geändert haben und nichts angepasst wurde
+  if (VD.edit && !dirty()) VD.edit = null;
+  if (document.activeElement && document.activeElement.type === 'text') { VD.pending = true; return; }
+  render();
+}
+
+function mode() { return document.body.classList.contains('dark') ? 1 : 0; }
+function swatch(colors, big) {
+  var i = mode();
+  return '<div class="sw">' + ['accent', 'warm', 'water', 'sun', 'alarm'].map(function (t, n) {
+    return '<i' + (n === 0 && big ? ' class="big"' : '') + ' style="background:' + colors[t][i] + '"></i>';
+  }).join('') + '</div>';
+}
+function dirty() {
+  if (!VD.edit || !VD.s) return false;
+  return ORDER.some(function (t) { return VD.edit[t][0] !== VD.s.colors[t][0] || VD.edit[t][1] !== VD.s.colors[t][1]; });
+}
+
+function render() {
+  var s = VD.s, el = document.getElementById('vd');
+  if (!s) return;
+  theme();
+  var h = '';
+  h += '<div class="cur"><span class="lbl">Theme</span><b>' + esc(s.current || 'Eigene Farben') + '</b></div>';
+
+  // klein: Chips
+  h += '<div class="chips">' + s.themes.map(function (t) {
+    return '<button class="chip' + (t.name === s.current ? ' on' : '') + '" data-load="' + esc(t.name) + '"><i style="background:' + t.colors.accent[mode()] + '"></i>' + esc(t.name) + '</button>';
+  }).join('') + '</div>';
+
+  // groß: Karten
+  h += '<div class="themes full">' + s.themes.map(function (t) {
+    var on = t.name === s.current;
+    return '<div class="th' + (on ? ' on' : '') + '" data-load="' + esc(t.name) + '" role="button" tabindex="0" aria-pressed="' + on + '">'
+      + '<span class="chk">' + CHECK + '</span>'
+      + '<span class="nm">' + esc(t.name) + '</span>'
+      + swatch(t.colors, true)
+      + (t.builtin ? '<span class="own lbl">eingebaut</span>' : '<span class="own lbl">eigenes</span><button class="del' + (VD.arm === t.name ? ' arm' : '') + '" data-del="' + esc(t.name) + '">' + (VD.arm === t.name ? 'Wirklich löschen?' : 'Löschen') + '</button>')
+      + '</div>';
+  }).join('') + '</div>';
+
+  // Farben anpassen
+  var c = VD.edit || s.colors;
+  h += '<div class="card full"><button class="head' + (VD.open ? ' open' : '') + '" id="tgl"><span class="lbl">Farben anpassen</span>' + CHEV + '</button>';
+  if (VD.open) {
+    h += '<div class="cols"><span></span><span class="h lbl">hell</span><span class="h lbl">dunkel</span>';
+    ORDER.forEach(function (t) {
+      h += '<span class="cap">' + esc(s.tokens[t]) + '</span>';
+      [0, 1].forEach(function (i) {
+        h += '<span class="pick"><input type="color" data-t="' + t + '" data-i="' + i + '" value="' + c[t][i].toLowerCase() + '" aria-label="' + esc(s.tokens[t]) + (i ? ' dunkel' : ' hell') + '"><span class="hex">' + c[t][i] + '</span></span>';
+      });
+    });
+    h += '</div><div class="row"><button class="btn solid" id="set"' + (dirty() ? '' : ' disabled') + '>Übernehmen</button><button class="btn" id="undo"' + (dirty() ? '' : ' disabled') + '>Verwerfen</button></div>';
+    h += '<div class="row"><input type="text" id="nm" placeholder="Name für eigenes Theme" maxlength="40" value="' + esc(VD.name || '') + '"><button class="btn" id="save">Als Theme speichern</button></div>';
+    h += '<span class="meta">Gespeichert werden die übernommenen Farben. Eingebaute Themes bleiben unverändert.</span>';
+  }
+  h += '</div>';
+
+  h += '<div class="row full"><button class="btn" id="apply">Jetzt anwenden</button><span class="msg">' + esc(VD.msg || '') + '</span></div>';
+  h += '<span class="meta full">Zuletzt angewendet: ' + esc(s.last || '–') + '</span>';
+  el.innerHTML = h;
+  bind();
+}
+
+function bind() {
+  document.querySelectorAll('[data-load]').forEach(function (b) {
+    b.onclick = function (ev) {
+      if (ev.target.closest('[data-del]')) return;
+      var n = b.getAttribute('data-load');
+      if (n === VD.s.current || VD.busy) return;
+      wait(); VD.edit = null; VD.arm = ''; VD.msg = 'Lade „' + n + '“ …';
+      send('LoadTheme', n); render();
+    };
+    b.onkeydown = function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); b.onclick(ev); } };
+  });
+  document.querySelectorAll('[data-del]').forEach(function (b) {
+    b.onclick = function (ev) {
+      ev.stopPropagation();
+      var n = b.getAttribute('data-del');
+      if (VD.arm !== n) { VD.arm = n; render(); setTimeout(function () { if (VD.arm === n) { VD.arm = ''; render(); } }, 4000); return; }
+      VD.arm = ''; VD.msg = '„' + n + '“ gelöscht'; send('DeleteTheme', n); render();
+    };
+  });
+  var t = document.getElementById('tgl');
+  if (t) t.onclick = function () { VD.open = !VD.open; render(); };
+  document.querySelectorAll('input[type=color]').forEach(function (inp) {
+    inp.oninput = function () {
+      if (!VD.edit) VD.edit = JSON.parse(JSON.stringify(VD.s.colors));
+      VD.edit[inp.getAttribute('data-t')][+inp.getAttribute('data-i')] = inp.value.toUpperCase();
+      inp.nextSibling.textContent = inp.value.toUpperCase();
+      var ok = dirty();
+      document.getElementById('set').disabled = !ok; document.getElementById('undo').disabled = !ok;
+    };
+    inp.onchange = function () { render(); };
+  });
+  var set = document.getElementById('set');
+  if (set) set.onclick = function () { if (!dirty()) return; wait(); VD.msg = 'Farben werden übernommen …'; send('SetColors', JSON.stringify(VD.edit)); };
+  var undo = document.getElementById('undo');
+  if (undo) undo.onclick = function () { VD.edit = null; render(); };
+  var nm = document.getElementById('nm');
+  if (nm) {
+    nm.oninput = function () { VD.name = nm.value; };
+    nm.onblur = function () { if (VD.pending) { VD.pending = false; render(); } };
+  }
+  var save = document.getElementById('save');
+  if (save) save.onclick = function () {
+    var n = (VD.name || '').trim();
+    if (!n) { VD.msg = 'Bitte einen Namen eingeben'; render(); return; }
+    if (VD.s.themes.some(function (x) { return x.builtin && x.name === n; })) { VD.msg = 'Eingebaute Themes können nicht überschrieben werden'; render(); return; }
+    if (dirty()) { VD.msg = 'Erst „Übernehmen“, dann speichern'; render(); return; }
+    VD.msg = 'Gespeichert als „' + n + '“'; VD.name = ''; send('SaveTheme', n);
+  };
+  var ap = document.getElementById('apply');
+  if (ap) ap.onclick = function () { VD.msg = 'Wird angewendet …'; send('Apply', true); render(); };
+}
+</script>

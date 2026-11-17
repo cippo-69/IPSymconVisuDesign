@@ -38,6 +38,16 @@ Eingebaut (nicht änderbar):
 Im Aktionsbereich: Theme wählen → „Laden und anwenden“. Eigene Farben mit Namen → „Aktuelle Farben als Theme speichern“.
 Eigene Themes lassen sich löschen; eingebaute nicht. Alle Texte der Themes erreichen mindestens 4,5:1 Kontrast auf Weiß bzw. #323437.
 
+## Kachel
+
+Die Instanz ist zugleich eine Kachel für die Kachel-Visu (HTML-SDK); einfach die Instanz oder einen Link darauf in die Visu legen.
+
+- Theme-Karten mit Farbstreifen (Akzent, Wärme, Wasser, Sonne, Alarm im aktuellen Modus); Antippen lädt und wendet das Theme an.
+- „Farben anpassen“: alle Farbrollen hell und dunkel mit Farbwählern, „Übernehmen“ / „Verwerfen“, „Als Theme speichern“.
+- Eigene Themes löschen (zweites Antippen bestätigt). „Jetzt anwenden“ zeigt das Ergebnis.
+- Kleine Kachel (unter 300 px Höhe): aktives Theme und Theme-Auswahl als Chips.
+- Die Kachel färbt sich selbst mit dem gewählten Theme um.
+
 ## Anwenden auf
 
 Ab Werk aus; im Formular unter „Anwenden auf“ einschalten. Geschrieben werden nur Abweichungen; ein Zeitgeber zieht alle 6 Stunden nach
@@ -68,6 +78,7 @@ Wochenpläne richten sich nur nach den Regeln.
 | `W5D_SaveTheme(int $InstanzID, string $Name)` | aktuelle Farben als eigenes Theme speichern |
 | `W5D_DeleteTheme(int $InstanzID, string $Name)` | eigenes Theme löschen |
 | `W5D_ExportTheme(int $InstanzID, string $Name)` / `W5D_ImportTheme(int $InstanzID, string $JSON)` | Theme als JSON aus- und einlesen (leerer Name = aktuelle Farben) |
+| `W5D_SetColors(int $InstanzID, string $JSON)` | Farben setzen: `{Rolle: ["#hell", "#dunkel"]}` |
 | `W5D_Apply(int $InstanzID)` | Farben jetzt übertragen; liefert eine Zusammenfassung |
 | `W5D_RestoreOriginals(int $InstanzID)` | Darstellungen und Profile auf die Ursprungsfarben |
 | `W5D_ResetDefaults(int $InstanzID)` | lädt das Theme Farbkonzept W5x |
