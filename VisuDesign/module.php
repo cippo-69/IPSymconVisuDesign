@@ -346,6 +346,7 @@ class VisuDesign extends IPSModule
         $themes = $this->SavedThemes();
         $themes[$Name] = $this->CurrentColors();
         $this->WriteAttributeString('Themes', json_encode($themes));
+        $this->Push();
         $this->SetSummary('Theme ' . $Name);
         $this->ReloadForm();
     }
@@ -359,6 +360,7 @@ class VisuDesign extends IPSModule
         $themes = $this->SavedThemes();
         unset($themes[$Name]);
         $this->WriteAttributeString('Themes', json_encode($themes));
+        $this->Push();
         $this->ReloadForm();
     }
 
@@ -394,6 +396,7 @@ class VisuDesign extends IPSModule
         $themes = $this->SavedThemes();
         $themes[$name] = $theme;
         $this->WriteAttributeString('Themes', json_encode($themes));
+        $this->Push();
         $this->ReloadForm();
     }
 
