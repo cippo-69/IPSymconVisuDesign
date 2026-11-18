@@ -167,6 +167,10 @@ Das Skript stellt `w5tTheme()` bereit; Module rufen es bei jedem Neuzeichnen auf
 | Raster (ab 1.6) | `<div class="grid" style="--min:112px">` mit Chips (Text wird gekürzt) |
 | Farbpunkt im Chip (ab 1.6) | `<button class="chip"><i style="--c:#f80"></i>Text</button>` |
 | Sonstiges (ab 1.6) | `.dim` (abgeschwächt), `.num` (Ziffern gleich breit) |
+| Temperaturfarben (ab 1.7) | `--w5t-hot` (Vorlauf, aus `--w5-warm`), `--w5t-cold` (Rücklauf, aus `--w5-water`), `--w5t-warm` (Warmwasser, aus `--w5-sun`) |
+| Rundknopf mit Zeichen (ab 1.7) | `<button class="ib plain">−</button>`; `.ib.lg` (44 px), `.ib.ghost` (ohne Fläche, z. B. Löschen) |
+| Rückfrage (ab 1.7) | `.ask` (roter Rahmen um ein Bedienelement, das ein zweites Tippen erwartet) |
+| Auswahllisten (ab 1.7) | `option` in Systemfarben, auch im Dunkelmodus lesbar |
 
 ## Lizenz
 
