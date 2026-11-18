@@ -311,6 +311,18 @@ class VisuDesign extends IPSModule
         return json_encode($out);
     }
 
+    /** Gemeinsame Bausteine für HTML-Kacheln (Wurzel class="w5t"): Kopf, Karten, Zeilen, Chips, Abschnitte; Farben aus --w5-*. */
+    public function GetTileCSS(): string
+    {
+        return (string) @file_get_contents(__DIR__ . '/tile.css');
+    }
+
+    /** Skript für HTML-Kacheln: setzt body.dark nach der Schriftfarbe der Visu und merkt aufgeklappte Abschnitte (details[data-k]). */
+    public function GetTileJS(): string
+    {
+        return (string) @file_get_contents(__DIR__ . '/tile.js');
+    }
+
     // ------------------------------------------------------------------ Themes
 
     /** JSON-Liste aller Theme-Namen (eingebaute zuerst). */
