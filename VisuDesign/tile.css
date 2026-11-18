@@ -47,3 +47,53 @@ html,body{margin:0;background:transparent}
 .w5t details[open] summary::after{content:"▴"}
 .w5t details summary .sub{margin-left:auto}
 @media(max-width:420px){.w5t .st .v{font-size:22px}.w5t .card{padding:12px}}
+/* ab 1.5: Modul-Kacheln (HTML-SDK) – Vollfläche, Bedienelemente, Status-Ergänzungen */
+body{--w5t-knob:#fff;--w5t-shadow:rgba(0,0,0,.3)}
+body.dark{--w5t-knob:#fff;--w5t-shadow:rgba(0,0,0,.5)}
+.w5t button,.w5t input,.w5t select{font:inherit;color:var(--w5t-fg)}
+.w5t button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.w5t.fill{position:absolute;inset:0;padding:var(--w5t-top,58px) 16px 16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+@media(max-width:420px){.w5t.fill{padding-left:12px;padding-right:12px}}
+body.compact .w5t{gap:8px}
+body.compact .w5t.fill{padding-bottom:8px}
+body.compact .w5t .more{display:none}
+body.compact .w5t .st .v{font-size:20px}
+body.compact .w5t .card{padding:8px 12px;gap:6px}
+.w5t .dot.busy{background:var(--w5t-warn);animation:w5tp 1.2s infinite}
+.w5t .badge.warn{background:var(--w5t-warn)}
+.w5t .card.alarm{background:rgba(128,128,128,.12);background:color-mix(in srgb,var(--w5t-bad) 16%,transparent);border:1px solid var(--w5t-bad)}
+.w5t .card.warn{background:rgba(128,128,128,.12);background:color-mix(in srgb,var(--w5t-warn) 16%,transparent);border:1px solid var(--w5t-warn)}
+.w5t .bar .tr i.warn{background:var(--w5t-warn)}
+.w5t .bar .tr i.bad{background:var(--w5t-bad)}
+.w5t .bars{display:flex;flex-direction:column;gap:10px}
+.w5t .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px}
+.w5t .kv span{color:var(--w5t-muted)}
+.w5t .kv b{font-weight:500;text-align:right;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.w5t details .kv{margin-top:10px}
+.w5t .tg{position:relative;width:56px;height:32px;border-radius:16px;background:var(--w5t-line);border:0;cursor:pointer;padding:0;flex:none}
+.w5t .tg::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:var(--w5t-knob);box-shadow:0 1px 3px var(--w5t-shadow);transition:left .15s}
+.w5t .tg.on{background:var(--w5t-accent)}
+.w5t .tg.on::after{left:27px}
+.w5t .tg.bad.on{background:var(--w5t-bad)}
+.w5t .tg:disabled{opacity:.45;cursor:default}
+.w5t .btn{min-height:38px;border:1px solid var(--w5t-line);background:none;border-radius:999px;padding:4px 14px;cursor:pointer;font-weight:600;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:none}
+.w5t .btn.acc{border-color:var(--w5t-accent);color:var(--w5t-accent)}
+.w5t .btn.bad{border-color:var(--w5t-bad);color:var(--w5t-bad)}
+.w5t .btn.solid{background:var(--w5t-fg);border-color:var(--w5t-fg);color:var(--w5t-on)}
+.w5t .btn.acc.solid{background:var(--w5t-accent);border-color:var(--w5t-accent);color:var(--w5t-on)}
+.w5t .btn.bad.solid{background:var(--w5t-bad);border-color:var(--w5t-bad);color:var(--w5t-on)}
+.w5t .btn.sm{min-height:30px;padding:2px 10px;font-size:12px}
+.w5t .btn:disabled{opacity:.45;cursor:default}
+.w5t .acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.w5t .lnk{border:0;background:none;cursor:pointer;font-size:12px;padding:4px;color:var(--w5t-muted)}
+.w5t .toast{font-size:12px;padding:8px 12px;border-radius:10px;background:var(--w5t-bg2);display:flex;justify-content:space-between;gap:8px;align-items:center}
+.w5t .inrow{display:flex;gap:8px;align-items:center}
+.w5t .in,.w5t .inrow input,.w5t .inrow select{flex:1;min-width:0;font-size:16px;min-height:42px;padding:6px 12px;border-radius:10px;border:1px solid var(--w5t-line);background:var(--w5t-bg2);color:var(--w5t-fg)}
+.w5t .in:focus,.w5t .inrow input:focus,.w5t .inrow select:focus{outline:none;border-color:var(--w5t-accent)}
+.w5t .seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;padding:3px;border-radius:999px;background:var(--w5t-bg2)}
+.w5t .seg button{border:0;background:none;border-radius:999px;min-height:34px;padding:2px 8px;cursor:pointer;font-size:13px;font-weight:500}
+.w5t .seg button.on{background:var(--w5t-accent);color:var(--w5t-on)}
+.w5t .seg.sm button{min-height:28px;font-size:12px}
+.w5t button.chip{border:0;cursor:pointer}
+.w5t .chip.on{background:var(--w5t-accent);color:var(--w5t-on)}
+.w5t .chip.sel{box-shadow:inset 0 0 0 2px var(--w5t-accent)}
