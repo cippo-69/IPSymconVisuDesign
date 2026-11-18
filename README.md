@@ -72,6 +72,8 @@ Wochenpläne richten sich nur nach den Regeln.
 | Funktion | Ergebnis |
 |---|---|
 | `W5D_GetCSS(int $InstanzID)` | CSS-Text: helle Werte auf `:root`, dunkle auf `body.dark` |
+| `W5D_GetTileCSS(int $InstanzID)` | CSS-Bausteine für HTML-Kacheln (Wurzel `class="w5t"`), siehe „Kachel-Bausteine“ |
+| `W5D_GetTileJS(int $InstanzID)` | Skript für HTML-Kacheln: setzt `body.dark` nach der Schriftfarbe der Visu, merkt aufgeklappte Abschnitte |
 | `W5D_GetColors(int $InstanzID)` | JSON `{"light":{…},"dark":{…},"mid":{…}}` für HTML-Boxen ohne Dark-Mode-Erkennung |
 | `W5D_GetThemes(int $InstanzID)` | JSON-Liste der Theme-Namen |
 | `W5D_LoadTheme(int $InstanzID, string $Name)` | Theme laden und anwenden |
@@ -115,6 +117,33 @@ body.dark { --x-accent: var(--w5-accent, #74B892); --x-on: var(--w5-on, #1E2224)
 ```
 
 Die Klasse `dark` setzt das Kachel-Skript, wenn die Schriftfarbe der Visu hell ist.
+
+## Kachel-Bausteine (ab 1.4)
+
+Für HTML-Kacheln aus Skripten (Variable mit `~HTMLBox`) liefert das Modul Layout und Dark-Mode-Erkennung mit.
+Die Kachel enthält dann kein eigenes CSS mehr; fehlt ein Baustein, wird er hier ergänzt.
+
+```php
+$id  = 12345; // Instanz Visu Design
+$css = W5D_GetCSS($id) . W5D_GetTileCSS($id);
+$html = '<style>' . $css . '</style>'
+    . '<div class="w5t" data-store="meinekachel">' . $inhalt . '</div>'
+    . '<script>' . W5D_GetTileJS($id) . '</script>';
+```
+
+| Baustein | Markup |
+|---|---|
+| Kopf | `<div class="head"><div class="st"><div class="v"><span class="dot ok"></span>Online</div><div class="sub">…</div></div><div class="facts"><span>Label <b>Wert</b></span></div></div>` |
+| Karte | `<div class="card"><span class="lbl">Titel</span> … </div>` |
+| Zeile | `<div class="row"><div class="t"><b>Titel</b><span class="sub">Zusatz</span></div><span class="r">Wert</span></div>` (`r wide` für lange Werte) |
+| Abschnitt | `<details data-k="schluessel"><summary><span class="lbl">Titel</span><span class="sub">Info</span></summary> … </details>` in einer Karte |
+| Chips | `<div class="chips"><span class="chip"><span class="dot sm ok"></span>Text</span></div>` |
+| Hinweis-Badges | `<div class="badges"><span class="badge">Text</span></div>` |
+| Balken | `<div class="bar"><span>Label</span><b>Wert</b><div class="tr"><i style="width:40%"></i></div></div>` |
+| Texte | `.sub` Nebentext, `.hint`, `.meta` Fußzeile, `.bad` Alarmfarbe, `.warn` Warnfarbe |
+| Punkte | `.dot` mit `ok` (Akzent), `bad` (Alarm, blinkt), `warn`; `.dot.sm` klein |
+
+`data-store` an der Wurzel: Name, unter dem das Skript aufgeklappte Abschnitte im Browser merkt (localStorage `w5t:<Name>`).
 
 ## Lizenz
 
