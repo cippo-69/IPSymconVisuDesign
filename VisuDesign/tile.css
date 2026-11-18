@@ -116,3 +116,13 @@ body.compact .w5t .card{padding:8px 12px;gap:6px}
 .w5t .grid .chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .w5t .dim{opacity:.55}
 .w5t .num{font-variant-numeric:tabular-nums}
+/* ab 1.7: Temperaturfarben (Vorlauf, Rücklauf, Warmwasser), Rundknopf mit Zeichen, Auswahllisten */
+body{--w5t-hot:var(--w5-warm,#D2553F);--w5t-cold:var(--w5-water,#3F7FD2);--w5t-warm:var(--w5-sun,#D08A1E)}
+body.dark{--w5t-hot:var(--w5-warm,#F07A64);--w5t-cold:var(--w5-water,#6FA4EE);--w5t-warm:var(--w5-sun,#E9A940)}
+.w5t .ib{font-size:20px;line-height:1;transition:transform .1s}
+.w5t .ib:active:not(:disabled){transform:scale(.92)}
+.w5t .ib.lg{width:44px;height:44px;font-size:22px}
+.w5t .ib.ghost{background:none;color:var(--w5t-muted)}
+.w5t .ib.ghost:hover{background:var(--w5t-bg2)}
+.w5t option{color:CanvasText;background:Canvas}
+.w5t .ask{outline:2px solid var(--w5t-bad);outline-offset:2px}
