@@ -1,0 +1,49 @@
+body{--w5t-fg:var(--w5-fg,#292826);--w5t-muted:var(--w5-muted,#6B6762);--w5t-accent:var(--w5-accent,#B84300);--w5t-warn:var(--w5-warn,#8A5300);--w5t-bad:var(--w5-alarm,#B3261E);--w5t-on:var(--w5-on,#fff);--w5t-bg:rgba(0,0,0,.045);--w5t-bg2:rgba(0,0,0,.075);--w5t-line:rgba(0,0,0,.12)}
+body.dark{--w5t-fg:var(--w5-fg,#F1F0EB);--w5t-muted:var(--w5-muted,#C4C4C4);--w5t-accent:var(--w5-accent,#FD7A33);--w5t-warn:var(--w5-warn,#F0B44C);--w5t-bad:var(--w5-alarm,#FF7262);--w5t-on:var(--w5-on,#292826);--w5t-bg:rgba(255,255,255,.10);--w5t-bg2:rgba(255,255,255,.15);--w5t-line:rgba(255,255,255,.16)}
+html,body{margin:0;background:transparent}
+.w5t,.w5t *{box-sizing:border-box}
+.w5t{font-family:"Poppins","Work Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:14px;line-height:1.35;color:var(--w5t-fg);display:flex;flex-direction:column;gap:12px;padding:2px 6px 4px 0}
+.w5t div,.w5t span,.w5t b,.w5t summary{color:var(--w5t-fg)}
+.w5t .lbl,.w5t .sub,.w5t .facts span,.w5t .hint,.w5t .meta,.w5t .bar span,.w5t summary::after{color:var(--w5t-muted)}
+.w5t .bad,.w5t .bad *,.w5t .facts b.bad{color:var(--w5t-bad)}
+.w5t .warn{color:var(--w5t-warn)}
+.w5t .badge{color:var(--w5t-on)}
+.w5t .lbl{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.w5t .head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.w5t .st{display:flex;flex-direction:column;gap:2px;min-width:0}
+.w5t .st .v{display:flex;align-items:center;gap:10px;font-size:26px;font-weight:500;line-height:1.1}
+.w5t .st .v.bad{color:var(--w5t-bad)}
+.w5t .dot{width:12px;height:12px;border-radius:50%;flex:none;display:inline-block;background:var(--w5t-muted)}
+.w5t .dot.ok{background:var(--w5t-accent);box-shadow:0 0 0 4px rgba(128,128,128,.18);box-shadow:0 0 0 4px color-mix(in srgb,var(--w5t-accent) 25%,transparent)}
+.w5t .dot.bad{background:var(--w5t-bad);box-shadow:0 0 0 4px rgba(128,128,128,.18);box-shadow:0 0 0 4px color-mix(in srgb,var(--w5t-bad) 28%,transparent);animation:w5tp 1.2s infinite}
+@keyframes w5tp{50%{opacity:.35}}
+.w5t .dot.warn{background:var(--w5t-warn)}
+.w5t .dot.sm{width:8px;height:8px;box-shadow:none;animation:none;margin-right:8px;vertical-align:1px}
+.w5t .sub{font-size:12px}
+.w5t .facts{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:12px;text-align:right;flex:none;white-space:nowrap}
+.w5t .facts b{font-weight:600}
+.w5t .chips{display:flex;flex-wrap:wrap;gap:6px}
+.w5t .chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:5px 12px;border-radius:999px;background:var(--w5t-bg2);white-space:nowrap;flex:none}
+.w5t .chip .dot.sm{margin-right:0}
+.w5t .badges{display:flex;flex-wrap:wrap;gap:6px}
+.w5t .badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--w5t-bad)}
+.w5t .card{background:var(--w5t-bg);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.w5t .row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:28px}
+.w5t .row .t{display:flex;flex-direction:column;gap:1px;min-width:0}
+.w5t .row .t b{font-weight:500}
+.w5t .row .r{text-align:right;font-size:13px;flex:none;max-width:55%}
+.w5t .row .r.wide{flex:1 1 auto;max-width:none}
+.w5t .card .row+.row,.w5t details .row{border-top:1px solid var(--w5t-line);padding-top:8px}
+.w5t details .row:first-of-type{margin-top:10px}
+.w5t .bar{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;font-size:12px}
+.w5t .bar .tr{grid-column:1/-1;height:6px;border-radius:3px;background:var(--w5t-line);overflow:hidden}
+.w5t .bar .tr i{display:block;height:100%;background:var(--w5t-accent)}
+.w5t .bar b{font-weight:500;font-variant-numeric:tabular-nums}
+.w5t .hint{font-size:12px}
+.w5t .meta{font-size:11px}
+.w5t details summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.w5t details summary::-webkit-details-marker{display:none}
+.w5t details summary::after{content:"▾";font-size:12px}
+.w5t details[open] summary::after{content:"▴"}
+.w5t details summary .sub{margin-left:auto}
+@media(max-width:420px){.w5t .st .v{font-size:22px}.w5t .card{padding:12px}}
