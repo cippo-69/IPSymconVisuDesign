@@ -162,6 +162,11 @@ Das Skript stellt `w5tTheme()` bereit; Module rufen es bei jedem Neuzeichnen auf
 | Chips | `button.chip`, `.chip.on`, `.chip.sel` |
 | Hinweisleiste | `.toast` |
 | Farb-Token | `--w5t-knob` (Schalter-Knopf), `--w5t-shadow` |
+| Schieberegler (ab 1.6) | `<input type="range" class="rng">`; Spur über `--tr` (z. B. Farbverlauf), Knopffarbe über `--th` |
+| Rundknopf (ab 1.6) | `<button class="ib"><svg>…</svg></button>` (Akzentfläche), `.ib.plain` (neutral), `.ib.sm` |
+| Raster (ab 1.6) | `<div class="grid" style="--min:112px">` mit Chips (Text wird gekürzt) |
+| Farbpunkt im Chip (ab 1.6) | `<button class="chip"><i style="--c:#f80"></i>Text</button>` |
+| Sonstiges (ab 1.6) | `.dim` (abgeschwächt), `.num` (Ziffern gleich breit) |
 
 ## Lizenz
 
