@@ -145,6 +145,24 @@ $html = '<style>' . $css . '</style>'
 
 `data-store` an der Wurzel: Name, unter dem das Skript aufgeklappte Abschnitte im Browser merkt (localStorage `w5t:<Name>`).
 
+### Ab 1.5: Bausteine für Kachel-Module (HTML-SDK)
+
+Kachel-Module liefern `<style>` mit `W5D_GetCSS` + `W5D_GetTileCSS`, danach `module.html` mit Wurzel `<div class="w5t fill">` und `<script>` mit `W5D_GetTileJS`.
+Das Skript stellt `w5tTheme()` bereit; Module rufen es bei jedem Neuzeichnen auf (Hell/Dunkel). In `module.html` steht dann nur noch CSS für Sonderelemente, das ausschließlich `--w5t-*`/`--w5-*` nutzt.
+
+| Baustein | Markup / Klassen |
+|---|---|
+| Vollfläche | `.w5t.fill` – füllt die Kachel, scrollt, oben Platz für den Kacheltitel (`--w5t-top`, Standard 58 px); `body.compact` (kleine Kachel) mit `.more` = in der kleinen Kachel ausgeblendet |
+| Status | `.dot.busy` (Warnfarbe, pulsiert), `.badge.warn`, `.card.alarm`, `.card.warn`, `.bar .tr i.warn` / `i.bad`, `.bars` |
+| Werte-Raster | `.kv` mit `<span>Name</span><b>Wert</b>` |
+| Schalter | `<button class="tg on">` (`.tg.bad` = Alarmfarbe, `:disabled`) |
+| Buttons | `.btn` (neutral), `.btn.acc` (Akzent), `.btn.bad` (Gefahr), zusätzlich `.solid`, `.sm`, `:disabled`; auch als `<a>`. Gruppe `.acts`, Textlink `.lnk` |
+| Eingaben | `.inrow` mit `input`/`select`, einzeln `.in` |
+| Segment-Umschalter | `<div class="seg"><button class="on">A</button><button>B</button></div>`, `.seg.sm` |
+| Chips | `button.chip`, `.chip.on`, `.chip.sel` |
+| Hinweisleiste | `.toast` |
+| Farb-Token | `--w5t-knob` (Schalter-Knopf), `--w5t-shadow` |
+
 ## Lizenz
 
 MIT
