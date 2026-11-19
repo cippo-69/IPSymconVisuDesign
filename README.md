@@ -34,6 +34,9 @@ Eingebaut (nicht änderbar):
 | Farbkonzept W5x | Schwarzwald: Tannengrün, Ochsenrot, Zink | #2F6B4F / #74B892 |
 | Fjord | kühl, nordisch: Petrol, Eisblau, Schiefer | #0F6E80 / #5CC8D7 |
 | Indigo | modern, kräftig: Indigo mit Orange und Cyan | #4F46E5 / #A5B4FC |
+| Velologe | Velologe CI: Dark Grey #292826, Orange #FD5D05, Light Grey #C4C4C4; Schrift auf Orange in Dark Grey | #FD5D05 / #FD5D05 |
+
+Im Theme Velologe ist der Akzent zugleich die OK-Farbe (`.dot.ok`, Schalter an) und liegt damit nah an der Warnfarbe.
 
 Im Aktionsbereich: Theme wählen → „Laden und anwenden“. Eigene Farben mit Namen → „Aktuelle Farben als Theme speichern“.
 Eigene Themes lassen sich löschen; eingebaute nicht. Alle Texte der Themes erreichen mindestens 4,5:1 Kontrast auf Weiß bzw. #323437.
@@ -71,7 +74,7 @@ Wochenpläne richten sich nur nach den Regeln.
 
 | Funktion | Ergebnis |
 |---|---|
-| `W5D_GetCSS(int $InstanzID)` | CSS-Text: helle Werte auf `:root`, dunkle auf `body.dark` |
+| `W5D_GetCSS(int $InstanzID)` | CSS-Text: helle Werte auf `:root`, dunkle auf `body.dark`; ab 1.8 zusätzlich `--w5-acctext`, `--w5-onalarm`, `--w5-onwarn` (siehe „Kontrast-Hilfen“) |
 | `W5D_GetTileCSS(int $InstanzID)` | CSS-Bausteine für HTML-Kacheln (Wurzel `class="w5t"`), siehe „Kachel-Bausteine“ |
 | `W5D_GetTileJS(int $InstanzID)` | Skript für HTML-Kacheln: setzt `body.dark` nach der Schriftfarbe der Visu, merkt aufgeklappte Abschnitte |
 | `W5D_GetColors(int $InstanzID)` | JSON `{"light":{…},"dark":{…},"mid":{…}}` für HTML-Boxen ohne Dark-Mode-Erkennung |
@@ -171,6 +174,20 @@ Das Skript stellt `w5tTheme()` bereit; Module rufen es bei jedem Neuzeichnen auf
 | Rundknopf mit Zeichen (ab 1.7) | `<button class="ib plain">−</button>`; `.ib.lg` (44 px), `.ib.ghost` (ohne Fläche, z. B. Löschen) |
 | Rückfrage (ab 1.7) | `.ask` (roter Rahmen um ein Bedienelement, das ein zweites Tippen erwartet) |
 | Auswahllisten (ab 1.7) | `option` in Systemfarben, auch im Dunkelmodus lesbar |
+
+### Ab 1.8: Kontrast-Hilfen und Velologe-Schriften
+
+`W5D_GetCSS` berechnet je Modus drei Variablen, damit helle Akzente (z. B. Orange) lesbar bleiben:
+
+| Variable | Wert |
+|---|---|
+| `--w5-acctext` | Text in Akzentfarbe: der Akzent, wenn er mindestens 4,5:1 zum Grund erreicht (hell Weiß, dunkel #323437), sonst die Textfarbe |
+| `--w5-onalarm` | Schrift auf Alarmfläche: Weiß oder die Textfarbe des hellen Modus, je nachdem, was mehr Kontrast hat |
+| `--w5-onwarn` | Schrift auf Warnfläche, ebenso |
+
+In `tile.css` daraus: `--w5t-acctext` (`.btn.acc`), `--w5t-on-bad` (`.badge`, `.btn.bad.solid`), `--w5t-on-warn` (`.badge.warn`), `--w5t-inv` (`.btn.solid`).
+Schriften: Text in Work Sans, große Werte (`.st .v`) in Coolvetica → Poppins → Arial, `.lbl` fett und gesperrt. Karten mit 12 px Radius.
+Die Werte nach dem Komma (ohne Design-Instanz) entsprechen dem Theme Velologe.
 
 ## Lizenz
 
