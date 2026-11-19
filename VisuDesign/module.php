@@ -44,8 +44,15 @@ class VisuDesign extends IPSModule
         'Indigo' => [
             'fg' => [0x1C1A2E, 0xEDEDF7], 'muted' => [0x67647E, 0xA8A5C0], 'accent' => [0x4F46E5, 0xA5B4FC], 'on' => [0xFFFFFF, 0x1C1A2E],
             'warm' => [0xC2410C, 0xFB923C], 'water' => [0x0E7490, 0x67D7EE], 'sun' => [0x806600, 0xFDE047], 'warn' => [0xB45309, 0xFBBF24], 'alarm' => [0xDC2626, 0xF87171]
+        ],
+        // Velologe CI: Dark Grey #292826, Orange #FD5D05, Light Grey #C4C4C4; Schrift auf Orange in Dark Grey
+        'Velologe' => [
+            'fg' => [0x292826, 0xFFFFFF], 'muted' => [0x696867, 0xC4C4C4], 'accent' => [0xFD5D05, 0xFD5D05], 'on' => [0x292826, 0x292826],
+            'warm' => [0x9C2F1E, 0xE8876B], 'water' => [0x2E5F9E, 0x8FB4E6], 'sun' => [0x7A6000, 0xF2CF63], 'warn' => [0x8A5300, 0xF0B44C], 'alarm' => [0xB3261E, 0xFF7262]
         ]
     ];
+    /** Grund, gegen den Text in Akzentfarbe geprüft wird: hell Weiß, dunkel Kachelgrund der Visu */
+    private const GROUND = ['light' => 0xFFFFFF, 'dark' => 0x323437];
     private const DEFAULT_THEME = 'Farbkonzept W5x';
 
     private const DEFAULT_RULES = [
@@ -288,15 +295,26 @@ class VisuDesign extends IPSModule
 
     // ------------------------------------------------------------------ Farben für Kacheln
 
-    /** CSS mit den Variablen --w5-*; hell auf :root, dunkel auf body.dark (Dark-Mode-Klasse der Kacheln). */
+    /**
+     * CSS mit den Variablen --w5-*; hell auf :root, dunkel auf body.dark (Dark-Mode-Klasse der Kacheln).
+     * Dazu berechnet: --w5-acctext (Text in Akzentfarbe; unter 4,5:1 zum Grund die Textfarbe)
+     * sowie --w5-onalarm / --w5-onwarn (Schrift auf Alarm- bzw. Warnfläche: Weiß oder dunkler Text, der mit mehr Kontrast).
+     */
     public function GetCSS(): string
     {
-        $light = $dark = '';
-        foreach (array_keys(self::TOKENS) as $token) {
-            $light .= '--w5-' . $token . ':' . $this->Hex($this->Color($token, 'light')) . ';';
-            $dark .= '--w5-' . $token . ':' . $this->Hex($this->Color($token, 'dark')) . ';';
+        $css = [];
+        foreach (['light', 'dark'] as $mode) {
+            $s = '';
+            foreach (array_keys(self::TOKENS) as $token) {
+                $s .= '--w5-' . $token . ':' . $this->Hex($this->Color($token, $mode)) . ';';
+            }
+            $acc = $this->Color('accent', $mode);
+            $s .= '--w5-acctext:' . $this->Hex($this->Contrast($acc, self::GROUND[$mode]) >= 4.5 ? $acc : $this->Color('fg', $mode)) . ';';
+            $s .= '--w5-onalarm:' . $this->Hex($this->OnColor($this->Color('alarm', $mode))) . ';';
+            $s .= '--w5-onwarn:' . $this->Hex($this->OnColor($this->Color('warn', $mode))) . ';';
+            $css[$mode] = $s;
         }
-        return ':root{' . $light . '}body.dark{' . $dark . '}';
+        return ':root{' . $css['light'] . '}body.dark{' . $css['dark'] . '}';
     }
 
     /** JSON {"light":{...},"dark":{...},"mid":{...}}; mid = Einzelfarbe für Stellen ohne Dark-Mode-Erkennung. */
